@@ -97,7 +97,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "TEXT"
       },
       {
-        "help": "Create a variable, populate it with list of SKUs in the cart page and use the variable here",
+        "help": "Create a Data Layer variable, populate it with list of SKUs and use the variable here",
         "displayName": "SKU List",
         "simpleValueType": true,
         "name": "skuList",
@@ -134,21 +134,21 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "List of Product Objects. See Reflektion documentation for details",
+        "help": "List of Product Objects. See Reflektion Events API documentation for details",
         "displayName": "Products List",
         "simpleValueType": true,
         "name": "productList",
         "type": "TEXT"
       },
       {
-        "help": "Checkout Object. See Reflektion documentation for details",
+        "help": "Checkout Object. See Reflektion Events API documentation for details",
         "displayName": "Checkout Details",
         "simpleValueType": true,
         "name": "checkoutDetails",
         "type": "TEXT"
       },
       {
-        "help": "User Object. See Reflektion documentation for details",
+        "help": "User Object. See Reflektion Events API documentation for details",
         "displayName": "User Details",
         "simpleValueType": true,
         "name": "userDetails",
@@ -163,7 +163,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "User Object. See Reflektion documentation for details",
+        "help": "User Object. See Reflektion Events API documentation for details",
         "displayName": "User Details",
         "simpleValueType": true,
         "name": "userLoginDetails",
@@ -297,38 +297,38 @@ log('data =', data);
 
 function getProductList(products, returnSkuList) {
   var additionalKeys = [
-        {name: 'price', type: 'number'}, 
-        {name: 'quantity', type: 'number'}, 
-        {name: 'psku', type: 'string'}, 
-        {name: 'price_original', type: 'number'}, 
-        {name: 'price_min', type: 'number'}, 
-        {name: 'price_max', type: 'number'}, 
-        {name: 'price_original_min', type: 'number'}, 
-        {name: 'price_original_max', type: 'number'}, 
-        {name: 'in_stock', type: 'number'}, 
-        {name: 'attributes'}],
-      productList = [],
-      sku, productItem, key, value;
+    { name: 'price', type: 'number' },
+    { name: 'quantity', type: 'number' },
+    { name: 'psku', type: 'string' },
+    { name: 'price_original', type: 'number' },
+    { name: 'price_min', type: 'number' },
+    { name: 'price_max', type: 'number' },
+    { name: 'price_original_min', type: 'number' },
+    { name: 'price_original_max', type: 'number' },
+    { name: 'in_stock', type: 'number' },
+    { name: 'attributes' }],
+    productList = [],
+    sku, productItem, key, value;
   if (products && products.length) {
     if (typeof products === 'string') {	//Single SKU string
-      productList = returnSkuList? [products]: [{ sku: products }];
+      productList = returnSkuList ? [products] : [{ sku: products }];
     }
     else if (typeof products === 'object') {
-      products.forEach(function(product){
-        if (product){
+      products.forEach(function (product) {
+        if (product) {
           if (typeof product === 'string') { // List of SKU strings
-            productList.push(returnSkuList? product: { sku: product });
+            productList.push(returnSkuList ? product : { sku: product });
           }
           else { // List of Product Objects
             sku = product.id || product.sku;
             if (sku) {
               sku = '' + sku;
               if (returnSkuList) {
-              	productList.push(sku);
+                productList.push(sku);
               }
               else {
                 productItem = { sku: sku };
-                additionalKeys.forEach(function(keyObject) {
+                additionalKeys.forEach(function (keyObject) {
                   key = keyObject.name;
                   if (product.hasOwnProperty(key)) {
                     value = product[key];
@@ -340,7 +340,7 @@ function getProductList(products, returnSkuList) {
                         value = '' + value;
                         break;
                     }
-                  	productItem[key] = value;
+                    productItem[key] = value;
                   }
                 });
                 productList.push(productItem);
@@ -357,7 +357,7 @@ function getProductList(products, returnSkuList) {
 function getUserDetails(userDetails) {
   var userObject;
   if (userDetails) {
-  	if (typeof userDetails === 'string') {
+    if (typeof userDetails === 'string') {
       userObject = { id: userDetails };
     }
     else if (typeof userDetails === 'object' && userDetails.id) {
@@ -367,22 +367,22 @@ function getUserDetails(userDetails) {
   return userObject;
 }
 
-switch(data.type) {
+switch (data.type) {
   case 'beacon':
     var query = require('queryPermission'),
-        injectScript = require('injectScript'),
-        beaconUrlMap = {
-          uat: 'https://initjs.uat.rfksrv.com/rfk/js/{ckey}/init.js',
-          prod: 'https://{dh}-prod.rfksrv.com/rfk/js/{ckey}/init.js'
-        },
-        ckey = (data.ckey||'').split(' ').join(''),
-        dh = ckey.split('-')[1],
-        beaconUrl;
-    
-    if (ckey && dh){
+      injectScript = require('injectScript'),
+      beaconUrlMap = {
+        uat: 'https://initjs.uat.rfksrv.com/rfk/js/{ckey}/init.js',
+        prod: 'https://{dh}-prod.rfksrv.com/rfk/js/{ckey}/init.js'
+      },
+      ckey = (data.ckey || '').split(' ').join(''),
+      dh = ckey.split('-')[1],
+      beaconUrl;
+
+    if (ckey && dh) {
       beaconUrl = beaconUrlMap[data.env].replace('{dh}', dh).replace('{ckey}', ckey);
 
-      if (query('inject_script', beaconUrl)){
+      if (query('inject_script', beaconUrl)) {
         injectScript(beaconUrl);
         log(beaconUrl);
       }
@@ -394,17 +394,17 @@ switch(data.type) {
       log('Invalid Customer Key');
     }
     break;
-    
+
   case 'productContext':
     var setInWindow = require('setInWindow'),
-        copyFromWindow = require('copyFromWindow'),
-        skuList = getProductList(data.skuList, 1),
-        rfkidString = (data.rfkids||'').split(' ').join(''),
-        context, rfk;
+      copyFromWindow = require('copyFromWindow'),
+      skuList = getProductList(data.skuList, 1),
+      rfkidString = (data.rfkids || '').split(' ').join(''),
+      context, rfk;
 
-    if (skuList.length){
+    if (skuList.length) {
       context = { context: { page: { sku: skuList } } };
-      if (rfkidString.length){
+      if (rfkidString.length) {
         context.widget = { rfkids: rfkidString.split(',') };
       }
       setInWindow('rfk', []);
@@ -415,22 +415,22 @@ switch(data.type) {
       log('Invalid SKU List');
     }
     break;
-    
+
   case 'a2c':
     var setInWindow = require('setInWindow'),
-        copyFromWindow = require('copyFromWindow'),
-        productsList = getProductList(data.products), 
-        pageName = data.name,
-        rfk;
-    
+      copyFromWindow = require('copyFromWindow'),
+      productsList = getProductList(data.products),
+      pageName = data.name,
+      rfk;
+
     if (pageName) {
       if (productsList && productsList.length) {
         setInWindow('rfk', []);
         rfk = copyFromWindow('rfk');
-        rfk.push(['trackEvent', { 
-          type: 'a2c', 
-          name: data.name, 
-          value: { products: productsList } 
+        rfk.push(['trackEvent', {
+          type: 'a2c',
+          name: data.name,
+          value: { products: productsList }
         }]);
       }
       else {
@@ -441,14 +441,14 @@ switch(data.type) {
       log('Invalid Page Name');
     }
     break;
-	
+
   case 'orderConfirm':
     var setInWindow = require('setInWindow'),
-        copyFromWindow = require('copyFromWindow'),
-        productsList = getProductList(data.productList),
-        checkoutDetails = data.checkoutDetails,
-        userDetails = getUserDetails(data.userDetails),
-        rfk, value;
+      copyFromWindow = require('copyFromWindow'),
+      productsList = getProductList(data.productList),
+      checkoutDetails = data.checkoutDetails,
+      userDetails = getUserDetails(data.userDetails),
+      rfk, value;
 
     if (productsList && productsList.length) {
       if (checkoutDetails && checkoutDetails.order_id && checkoutDetails.total) {
@@ -458,10 +458,10 @@ switch(data.type) {
         }
         setInWindow('rfk', []);
         rfk = copyFromWindow('rfk');
-        rfk.push(['trackEvent', { 
-          type: 'order', 
-          name: 'confirm', 
-          value: value 
+        rfk.push(['trackEvent', {
+          type: 'order',
+          name: 'confirm',
+          value: value
         }]);
       }
       else {
@@ -472,20 +472,20 @@ switch(data.type) {
       log('Invalid Products');
     }
     break;
-    
+
   case 'userLogin':
     var setInWindow = require('setInWindow'),
-        copyFromWindow = require('copyFromWindow'),
-        userDetails = getUserDetails(data.userLoginDetails),
-        rfk;
+      copyFromWindow = require('copyFromWindow'),
+      userDetails = getUserDetails(data.userLoginDetails),
+      rfk;
 
     if (userDetails) {
       setInWindow('rfk', []);
       rfk = copyFromWindow('rfk');
-      rfk.push(['trackEvent', { 
-        type: 'user', 
-        name: 'login', 
-        value: { user: userDetails } 
+      rfk.push(['trackEvent', {
+        type: 'user',
+        name: 'login',
+        value: { user: userDetails }
       }]);
     }
     else {
@@ -500,4 +500,4 @@ data.gtmOnSuccess();
 
 ___NOTES___
 
-Created on 8/19/2019, 11:11:33 AM
+Created on 8/19/2019, 2:04:17 PM
