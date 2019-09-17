@@ -1,6 +1,6 @@
 # Reflektion Template
 
-GTM Tag Template to setup
+Reflektion GTM Tag Template can be used to setup
 * Reflektion Beacon
 * Products Context
 * Add to Cart Event
