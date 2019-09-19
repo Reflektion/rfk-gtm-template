@@ -33,7 +33,7 @@ ___TEMPLATE_PARAMETERS___
         "value": "productContext"
       },
       {
-        "displayValue": "Event - Add To Cart",
+        "displayValue": "Event - Add to Cart",
         "value": "a2c"
       },
       {
@@ -91,7 +91,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "GROUP",
     "subParams": [
       {
-        "help": "List of rfkids. Products Context will be applied to all Reflektion widgets in the page if nothing is specified here. See Reflektion Widget Context Technical Guide for details",
+        "help": "Comma separated rfkids. Products Context will be applied to all Reflektion widgets in the page if nothing is specified here. See Reflektion Widget Context Technical Guide for details. (Comma separated rfkids entered here will be converted into a list of rfkids)",
         "displayName": "rfkids",
         "simpleValueType": true,
         "name": "rfkids",
@@ -299,12 +299,14 @@ function insertBeacon(data) {
 function updateProductContext(data) {
   var createQueue = require('createQueue'),
     skuList = data.skuList,
-    rfkids = data.rfkids,
+    rfkids = (data.rfkids||'').split(' ').join(''),
     context, rfkPush;
 
   if (skuList && skuList.length) {
     context = { context: { page: { sku: skuList } } };
     if (rfkids && rfkids.length) {
+      if (typeof rfkids == 'string')
+        rfkids = rfkids.split(',');
       context.widget = { rfkids: rfkids };
     }
     rfkPush = createQueue('rfk');
@@ -418,4 +420,4 @@ switch (data.type) {
 
 ___NOTES___
 
-Created on 9/17/2019, 2:38:28 PM
+Created on 9/18/2019, 6:01:23 PM
