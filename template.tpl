@@ -10,7 +10,7 @@ ___INFO___
 {
   "displayName": "Reflektion",
   "description": "Template for setting up Reflektion beacon, context and events",
-  "categories": ["ANALYTICS", "CONVERSION_TRACKING", "PERSONALIZATION"],
+  "categories": ["ANALYTICS", "CONVERSIONS", "PERSONALIZATION"],
   "securityGroups": [],
   "id": "cvt_temp_public_id",
   "type": "TAG",
