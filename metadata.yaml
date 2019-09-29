@@ -1,5 +1,5 @@
 homepage: "www.reflektion.com"
 documentation: "https://docs.google.com/document/d/1O7QcaHONBCqvbqIP3cfX7_TJyOa4LdCCdwsQhy7ENdI"
 versions:
-  - sha: d6df8801fc16cda75d165b7ad3ad9d99920d5875
+  - sha: 752db7ad482fcd77dc60e5f2ac644b02ac86e650
     changeNotes: Initial release
