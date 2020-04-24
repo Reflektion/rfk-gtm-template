@@ -1,5 +1,7 @@
-homepage: "www.reflektion.com"
-documentation: "https://docs.google.com/document/d/1O7QcaHONBCqvbqIP3cfX7_TJyOa4LdCCdwsQhy7ENdI"
+homepage: www.reflektion.com
+documentation: https://docs.google.com/document/d/1O7QcaHONBCqvbqIP3cfX7_TJyOa4LdCCdwsQhy7ENdI
 versions:
+  - sha: 003bb2dba2dc3bad95da42612b7ef1c85768fc4e
+    changeNotes: Adds new template version
   - sha: 752db7ad482fcd77dc60e5f2ac644b02ac86e650
     changeNotes: Initial release

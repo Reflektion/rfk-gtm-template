@@ -1,0 +1,1219 @@
+
+scenarios:
+- name: Add to cart Event - no product mapping
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: false,
+        productDetails: {
+          sku: '123123',
+          title: 'abc',
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+                {
+                  sku: '123123',
+                  title: 'abc',
+                  extra: 1
+                }
+            ]
+        }
+    });
+- name: Add to cart Event - maps a product object
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productQuantityType: 'prop',
+        productQuantityProp: 'extra',
+        productDetails: {
+          skuId: '123123',
+          title: 'abc',
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+                {
+                    sku: '123123',
+                    quantity: 1
+                }
+            ]
+        }
+    });
+- name: Add to cart Event - maps a product object, mapping keys from data layer variables
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        myProductTitle: 'My Product Title',
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        // mapped to {{myProductTitle}}
+        productQuantityType: 'prop',
+        productQuantityProp: 'extra',
+        productDetails: {
+          skuId: '123123',
+          title: 'My Product Title',
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+                quantity: 1,
+              }
+            ]
+        }
+    });
+- name: maps a product object with fitments within the product
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productFitmentsMapEnabled: true,
+        productFitmentsType: 'prop',
+        productFitmentsProp: 'myFitments',
+        productFitmentsYearProp: 'myYear',
+        productFitmentsYearType: 'prop',
+        productFitmentsMakeProp: 'myMake',
+        productFitmentsMakeType: 'prop',
+        productFitmentsModelProp: 'myModel',
+        productFitmentsModelType: 'prop',
+        productFitmentsFitTypeProp: 'myFitmentType',
+        productFitmentsFitTypeType: 'prop',
+        productDetails: {
+          skuId: '123123',
+          title: 'abc',
+          price: 132,
+          myFitments: [
+            {
+              myYear: 2008,
+              myMake: 'My Make',
+              myModel: 'My Model',
+              myFitmentType: 'My Fitment Type',
+            }
+          ],
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+                price: 132,
+                fitments: [
+                  {
+                    year: 2008,
+                    model: 'My Model',
+                    make: 'My Make',
+                    fit_type: 'My Fitment Type'
+                  }
+                ]
+              }
+            ]
+        }
+    });
+- name: maps a product object with fitments from a data layer variable
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productFitmentsMapEnabled: true,
+        productFitmentsType: 'var',
+        productFitmentsYearProp: 'myYear',
+        productFitmentsYearType: 'prop',
+        productFitmentsMakeProp: 'myMake',
+        productFitmentsMakeType: 'prop',
+        productFitmentsModelProp: 'My Other Model',
+        productFitmentsModelProp: 'My Other Model',
+        productFitmentsModelType: 'var',
+        productFitmentsFitTypeProp: 'myFitmentType',
+        productFitmentsFitTypeType: 'prop',
+        // mapped from {{fitments}}
+        productFitmentsProp: [
+          {
+            myYear: 2008,
+            myMake: 'My Make',
+            myModel: 'My Model',
+            myFitmentType: 'My Fitment Type',
+          }
+        ],
+        productDetails: {
+          skuId: '123123',
+          title: 'abc',
+          price: 132,
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+                price: 132,
+                fitments: [
+                  {
+                    year: 2008,
+                    model: 'My Other Model',
+                    make: 'My Make',
+                    fit_type: 'My Fitment Type'
+                  }
+                ]
+              }
+            ]
+        }
+    });
+- name: maps a product object with fitment object within the product
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productFitmentsMapEnabled: true,
+        productFitmentsType: 'prop',
+        productFitmentsProp: 'myFitment',
+        productFitmentsYearProp: 'myYear',
+        productFitmentsYearType: 'prop',
+        productFitmentsMakeProp: 'myMake',
+        productFitmentsMakeType: 'prop',
+        productFitmentsModelProp: 'myModel',
+        productFitmentsModelType: 'prop',
+        productFitmentsFitTypeProp: 'myFitmentType',
+        productFitmentsFitTypeType: 'prop',
+        productDetails: {
+          skuId: '123123',
+          title: 'abc',
+          price: 132,
+          myFitment: {
+              myYear: 2008,
+              myMake: 'My Make',
+              myModel: 'My Model',
+              myFitmentType: 'My Fitment Type',
+            },
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+                price: 132,
+                fitments: [
+                  {
+                    year: 2008,
+                    model: 'My Model',
+                    make: 'My Make',
+                    fit_type: 'My Fitment Type'
+                  }
+                ]
+              }
+            ]
+        }
+    });
+- name: maps a product object with fitment object from a data layer variable
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productFitmentsYearProp: 'myYear',
+        productFitmentsYearType: 'prop',
+        productFitmentsMakeProp: 'myMake',
+        productFitmentsMakeType: 'prop',
+        productFitmentsModelProp: 'myModel',
+        productFitmentsModelType: 'prop',
+        productFitmentsFitTypeProp: 'myFitmentType',
+        productFitmentsFitTypeType: 'prop',
+        fitment: {
+            myYear: 2008,
+            myMake: 'My Make',
+            myModel: 'My Model',
+            myFitmentType: 'My Fitment Type',
+          },
+        // mapped from {{fitment}}
+        productFitmentsMapEnabled: true,
+        productFitmentsType: 'var',
+        productFitmentsProp: {
+            myYear: 2008,
+            myMake: 'My Make',
+            myModel: 'My Model',
+            myFitmentType: 'My Fitment Type',
+          },
+        productDetails: {
+          skuId: '123123',
+          title: 'abc',
+          price: 132,
+          extra: 1
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+                price: 132,
+                fitments: [
+                  {
+                    year: 2008,
+                    model: 'My Model',
+                    make: 'My Make',
+                    fit_type: 'My Fitment Type'
+                  }
+                ]
+              }
+            ]
+        }
+    });
+- name: maps a product object with auto mapping
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+         productSkuType: 'prop',
+         productSkuProp: 'skuId',
+         productPriceType: 'auto',
+         productFitmentsMapEnabled: true,
+         productFitmentsType: 'prop',
+         productFitmentsProp: 'myFitment',
+         productFitmentsModelProp: 'myModel',
+         productFitmentsYearType: 'auto',
+         productFitmentsMakeType: 'auto',
+         productFitmentsModelType: 'prop',
+         productFitmentsFitTypeProp: 'myFitmentType',
+         productFitmentsFitTypeType: 'prop',
+         productDetails: {
+           skuId: '123123',
+           title: 'abc',
+           price: 132,
+           myFitment: {
+               year: 2008,
+               make: 'My Make',
+               myModel: 'My Model',
+               myFitmentType: 'My Fitment Type',
+             },
+           extra: 1
+         }
+     };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+                price: 132,
+                fitments: [
+                    {
+                      year: 2008,
+                      model: 'My Model',
+                      make: 'My Make',
+                      fit_type: 'My Fitment Type'
+                    }
+                  ]
+              }
+            ]
+        }
+    });
+- name: maps a products list
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productDetails: [{
+          skuId: '123123',
+          title: 'abc',
+          extra: 1
+        }]
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [
+              {
+                sku: '123123',
+              }
+            ]
+        }
+    });
+- name: maps an empty products list
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productDetails: []
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Products');
+- name: maps to a non-values mapped product
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productDetails: {
+            productPrice: 55,
+            productSku: '123'
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Products');
+- name: maps to a non-values mapped fitments
+  code: |-
+    const mockData = {
+        type: 'a2c',
+        pageName: 'pdp',
+        productMapEnabled: true,
+        productSkuType: 'prop',
+        productSkuProp: 'skuId',
+        productPriceType: 'prop',
+        productPriceProp: 'price',
+        productFitmentsMapEnabled: true,
+        productFitmentsType: 'prop',
+        productFitmentsProp: 'fitments',
+        productFitmentsModelType: 'prop',
+        productFitmentsModelProp: 'skuId',
+        productDetails: {
+            price: 55,
+            skuId: '123',
+            fitments: {
+                myOtherModel: 2000
+            }
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'a2c',
+        name: 'pdp',
+        value: {
+            products: [{
+                price: 55,
+                sku: '123',
+                fitments: undefined,
+            }]
+        }
+    });
+
+- name: Map users - no mapped data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: true,
+        checkoutMapEnabled: false,
+        userIdType: 'auto',
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'order',
+        name: 'confirm',
+        value: {
+            checkout: {
+              d: 21,
+              e: '22',
+              f: false
+            },
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ],
+            user: undefined
+        }
+    });
+
+- name: Map users - with prop, var, key-map and auto mapped data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: true,
+        checkoutMapEnabled: false,
+        userIdType: 'prop',
+        userIdProp: 'a',
+        userFirstNameType: 'var',
+        userFirstNameProp: 'Leon',
+        userLastNameType: 'auto',
+        userCustom: [
+            {
+                key: 'address',
+                type: 'auto',
+                prop: ''
+            },
+            {
+                key: 'attributes',
+                type: 'prop',
+                prop: 'userAttributes'
+            }
+        ],
+        userDetails: {
+            a: 11,
+            last_name: 'Georgia',
+            c: false,
+            userAttributes: {
+               a: 1,
+               b: '2'
+            },
+            address: {
+                street: '123 Fake St.',
+                zipcode: 94522
+            }
+        },
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'order',
+        name: 'confirm',
+        value: {
+            user: {
+                id: 11,
+                first_name: 'Leon',
+                last_name: 'Georgia',
+                address: {
+                     street: '123 Fake St.',
+                     zipcode: 94522
+                },
+                attributes: {
+                    a: 1,
+                    b: '2'
+                }
+            },
+            checkout: {
+              d: 21,
+              e: '22',
+              f: false
+            },
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ]
+        }
+    });
+
+- name: Map users - with var key-map mapped data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: true,
+        checkoutMapEnabled: false,
+        userIdType: 'prop',
+        userIdProp: 'a',
+        userFirstNameType: 'var',
+        userFirstNameProp: 'Leon',
+        userLastNameType: 'auto',
+        userCustom: [
+            {
+                key: 'attributes',
+                type: 'var',
+                prop: {
+                    a: 1,
+                    b: '2'
+                }
+            }
+        ],
+        userDetails: {
+            a: 11,
+            last_name: 'Georgia',
+            c: false,
+            userAttributes: {
+               a: 1,
+               b: '2'
+            }
+        },
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'order',
+        name: 'confirm',
+        value: {
+            user: {
+                id: 11,
+                first_name: 'Leon',
+                last_name: 'Georgia',
+                attributes: {
+                    a: 1,
+                    b: '2'
+                }
+            },
+            checkout: {
+              d: 21,
+              e: '22',
+              f: false
+            },
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ]
+        }
+    });
+
+- name: Map checkout - no mapped data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: true,
+        checkoutOrderIdType: 'auto',
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Checkout Details');
+
+- name: Map checkout - with prop, var and auto mapped data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: true,
+        checkoutOrderIdType: 'prop',
+        checkoutOrderIdProp: 'd',
+        checkoutTotalType: 'var',
+        checkoutTotalProp: 1030,
+        checkoutSubtotalType: 'auto',
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+        checkoutDetails: {
+            d: 21,
+            subtotal: 22,
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'order',
+        name: 'confirm',
+        value: {
+            user: {
+                a: 11,
+                b: '12',
+                c: false
+            },
+            checkout: {
+              order_id: 21,
+              total: 1030,
+              subtotal: 22,
+            },
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ]
+        }
+    });
+
+- name: Order Confirm Event - no data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: false,
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Products');
+- name: Order Confirm Event - no products data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: false,
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Products');
+- name: Order Confirm Event - no checkout data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: false,
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+        productDetails: {
+            price: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Checkout Details');
+- name: Order Confirm Event - no user data
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: false,
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'order',
+        name: 'confirm',
+        value: {
+            user: undefined,
+            checkout: {
+              d: 21,
+              e: '22',
+              f: false
+            },
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ]
+        }
+    });
+- name: Order Confirm Event - no mapping
+  code: |-
+    const mockData = {
+        type: 'orderConfirm',
+        productMapEnabled: false,
+        userMapEnabled: false,
+        checkoutMapEnabled: false,
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+        checkoutDetails: {
+            d: 21,
+            e: '22',
+            f: false
+        },
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'order',
+        name: 'confirm',
+        value: {
+            user: {
+              a: 11,
+              b: '12',
+              c: false
+            },
+            checkout: {
+              d: 21,
+              e: '22',
+              f: false
+            },
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ]
+        }
+    });
+
+- name: Status Cart Event - no data
+  code: |-
+    const mockData = {
+        type: 'statusCart',
+        productMapEnabled: false,
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Products');
+- name: Status Cart Event - no products data
+  code: |-
+    const mockData = {
+        type: 'statusCart',
+        productMapEnabled: false,
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid Products');
+- name: Status Cart Event - no mapping
+  code: |-
+    const mockData = {
+        type: 'statusCart',
+        productMapEnabled: false,
+        productDetails: {
+            g: 31,
+            h: '32',
+            i: false
+        }
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'status',
+        name: 'cart',
+        value: {
+            products: [
+                {
+                  g: 31,
+                  h: '32',
+                  i: false
+                }
+            ]
+        }
+    });
+
+- name: User Login Event - no user data
+  code: |-
+    const mockData = {
+        type: 'userLogin',
+        userMapEnabled: false,
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid User Details');
+- name: User Login Event - no mapping
+  code: |-
+    const mockData = {
+        type: 'userLogin',
+        userMapEnabled: false,
+        userDetails: {
+            a: 11,
+            b: '12',
+            c: false
+        },
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('track', {
+        type: 'user',
+        name: 'login',
+        value: {
+            user: {
+              a: 11,
+              b: '12',
+              c: false
+            },
+        }
+    });
+- name: Update Product Context - no sku list
+  code: |-
+    const mockData = {
+        type: 'productContext',
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('logToConsole').wasCalledWith('Invalid SKU List');
+- name: Update Product Context - no rfkids
+  code: |-
+    const mockData = {
+        type: 'productContext',
+        skuList: ['sku1', 'sku2', 'sku3']
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('productContext', {
+        context: {
+            page: {
+                sku: ['sku1', 'sku2', 'sku3']
+            }
+        }
+    });
+- name: Update Product Context - with rfkids
+  code: |-
+    const mockData = {
+        type: 'productContext',
+        skuList: ['sku1', 'sku2', 'sku3'],
+        rfkids: 'rfkid_1, rfkid_30,rfkid_31',
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('logToConsole').wasCalledWith('productContext', {
+        widget: {
+            rfkids: ['rfkid_1', 'rfkid_30', 'rfkid_31']
+        },
+        context: {
+            page: {
+                sku: ['sku1', 'sku2', 'sku3']
+            }
+        }
+    });
+- name: Beacon - inject prod beacon
+  code: |-
+    const mockData = {
+      type: 'beacon',
+      env: 'prod',
+      ckey: '123-32113123'
+    };
+
+    mock('injectScript', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('queryPermission').wasCalledWith('inject_script', 'https://32113123-prod.rfksrv.com/rfk/js/123-32113123/init.js');
+    assertApi('injectScript').wasCalled();
+- name: Beacon - inject uat beacon
+  code: |-
+    const mockData = {
+      type: 'beacon',
+      env: 'uat',
+      ckey: '123-32113123'
+    };
+
+    mock('injectScript', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('queryPermission').wasCalledWith('inject_script', 'https://initjs.uat.rfksrv.com/rfk/js/123-32113123/init.js');
+    assertApi('injectScript').wasCalled();
+- name: Beacon - custom url
+  code: |-
+    const mockData = {
+      type: 'beacon',
+      customBeaconUrl: 'https://example.com/init.js',
+      env: 'prod',
+      ckey: '123-32113123'
+    };
+
+    mock('queryPermission', true);
+    mock('injectScript', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('queryPermission').wasCalledWith('inject_script', 'https://example.com/init.js');
+    assertApi('injectScript').wasCalled();
+- name: Beacon - custom url fails due to permissions
+  code: |-
+    const mockData = {
+      type: 'beacon',
+      customBeaconUrl: 'https://example.com/init.js',
+      env: 'prod',
+      ckey: '123-32113123'
+    };
+
+    mock('queryPermission', false);
+    mock('injectScript', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+    assertApi('queryPermission').wasCalledWith('inject_script', 'https://example.com/init.js');
+    assertApi('injectScript').wasNotCalled();
+    assertApi('logToConsole').wasCalledWith('Failed to load init.js due to URL permissions');
