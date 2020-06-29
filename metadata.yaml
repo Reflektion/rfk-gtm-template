@@ -2,6 +2,6 @@ homepage: www.reflektion.com
 documentation: https://docs.google.com/document/d/1O7QcaHONBCqvbqIP3cfX7_TJyOa4LdCCdwsQhy7ENdI
 versions:
   - sha: 0f646602f2897e3d29cd98a08ead1eada4e57e28
-    changeNotes: Initial commit
+    changeNotes: Add new template version
   - sha: 752db7ad482fcd77dc60e5f2ac644b02ac86e650
     changeNotes: Initial release
