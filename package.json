@@ -1,0 +1,25 @@
+{
+  "name": "rfk-gtm-template",
+  "description": "Reflektion GTM Tag Template",
+  "private": true,
+  "main": "template.tpl",
+  "repository": "Reflektion/rfk-gtm-template",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "release": "node scripts/release.js",
+    "dev": "nodemon scripts/build.js",
+    "start": "yarn run dev"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^8.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "fs-extra": "8.1.0",
+    "lodash.get": "^4.4.2",
+    "nodemon": "1.19.4",
+    "shelljs": "0.8.3",
+    "yaml": "1.8.2"
+  }
+}
